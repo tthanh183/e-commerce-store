@@ -116,7 +116,7 @@ export const toggleFeaturedProduct = async (req, res) => {
     if (product) {
       product.isFeatured = !product.isFeatured;
       const updatedProduct = await product.save();
-      await updatedFeateredProductsCache();
+      await updatedFeaturedProductsCache();
       res.json(updatedProduct);
     } else {
       res.status(404).json({ message: 'Product not found' });
@@ -127,7 +127,7 @@ export const toggleFeaturedProduct = async (req, res) => {
   }
 };
 
-async function updatedFeateredProductsCache() {
+async function updatedFeaturedProductsCache() {
   try {
     const featuredProducts = await Product.find({ isFeatured: true }).lean();
     await redis.set('featured_products', JSON.stringify(featuredProducts));
