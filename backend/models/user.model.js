@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcryptjs from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
   {
@@ -45,8 +45,8 @@ userSchema.pre('save', async function (next) {
     next();
   }
   try {
-    const salt = await bcryptjs.genSalt(10);
-    this.password = await bcryptjs.hash(this.password, salt);
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
     next(error);
@@ -54,7 +54,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.comparePassword = async function (password) {
-  return bcryptjs.compare(password, this.password);
+  return bcrypt.compare(password, this.password);
 };
 
 const User = mongoose.model('User', userSchema);

@@ -55,13 +55,10 @@ export const signup = async (req, res) => {
 
     setCookies(res, accessToken, refreshToken);
     res.status(201).json({
-      message: 'User created successfully',
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
     });
   } catch (error) {
     console.log('Error in signup controller ', error.message);
@@ -73,11 +70,12 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-
+    
     if (user && (await user.comparePassword(password))) {
       const { accessToken, refreshToken } = generateTokens(user._id);
       await storeRefreshToken(user._id, refreshToken);
       setCookies(res, accessToken, refreshToken);
+      
       res.json({
         _id: user._id,
         name: user.name,
