@@ -30,6 +30,16 @@ export const useProductStore = create(set => ({
       toast.error(error.response.data.message || 'Error fetching products');
     }
   },
+  fetchProductsByCategory: async category => {
+    set({ loading: true });
+    try {
+      const res = await axios.get(`/api/products/category/${category}`);
+      set({ products: res.data.products, loading: false });
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response.data.message || 'Error fetching products');
+    }
+  },
   deleteProduct: async productId => {
     set({ loading: true });
     try {
