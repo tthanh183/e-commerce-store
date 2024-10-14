@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+import axios from '../lib/axios';
 
 export const useProductStore = create(set => ({
   products: [],
@@ -10,7 +10,7 @@ export const useProductStore = create(set => ({
   createProduct: async productData => {
     set({ loading: true });
     try {
-      const res = await axios.post('/api/products', productData);
+      const res = await axios.post('/products', productData);
       set(state => ({
         products: [...state.products, res.data],
         loading: false,
@@ -23,17 +23,18 @@ export const useProductStore = create(set => ({
   fetchAllProducts: async () => {
     set({ loading: true });
     try {
-      const res = await axios.get('/api/products');
+      const res = await axios.get('/products');
       set({ products: res.data.products, loading: false });
     } catch (error) {
       set({ loading: false });
       toast.error(error.response.data.message || 'Error fetching products');
     }
   },
+
   fetchProductsByCategory: async category => {
     set({ loading: true });
     try {
-      const res = await axios.get(`/api/products/category/${category}`);
+      const res = await axios.get(`/products/category/${category}`);
       set({ products: res.data.products, loading: false });
     } catch (error) {
       set({ loading: false });
@@ -43,7 +44,7 @@ export const useProductStore = create(set => ({
   deleteProduct: async productId => {
     set({ loading: true });
     try {
-      await axios.delete(`/api/products/${productId}`);
+      await axios.delete(`/products/${productId}`);
       set(state => ({
         products: state.products.filter(product => product._id !== productId),
         loading: false,
@@ -56,7 +57,7 @@ export const useProductStore = create(set => ({
   toggleFeaturedProduct: async productId => {
     set({ loading: true });
     try {
-      const res = await axios.patch(`/api/products/${productId}`);
+      const res = await axios.patch(`/products/${productId}`);
       set(state => ({
         products: state.products.map(product =>
           product._id === productId

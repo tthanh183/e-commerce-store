@@ -4,12 +4,15 @@ export const getCartProducts = async (req, res) => {
   try {
     const products = await Product.find({ _id: { $in: req.user.cartItems } });
     const cartItems = products.map(product => {
-      const item = req.user.cartItems.find(p => p.id === product.id);
-      return { ...product._doc, quantity: item.quantity };
+      const item = req.user.cartItems.find(
+        cartItem => cartItem.id === product.id
+      );
+      return { ...product.toJSON(), quantity: item.quantity };
     });
-    return res.json(cartItems);
+
+    res.json(cartItems);
   } catch (error) {
-    console.log('Error in getCartProducts controller ', error.message);
+    console.log('Error in getCartProducts controller', error.message);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -23,7 +26,7 @@ export const addToCart = async (req, res) => {
     if (existingProduct) {
       existingProduct.quantity += 1;
     } else {
-      user.cartItems.push({ product: productId });
+      user.cartItems.push(productId);
     }
 
     await user.save();

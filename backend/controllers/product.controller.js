@@ -4,6 +4,8 @@ import Product from '../models/product.model.js';
 
 export const getAllProducts = async (req, res) => {
   try {
+    console.log('aaaa');
+    
     const products = await Product.find({});
     res.json({products});
   } catch (error) {
@@ -100,6 +102,8 @@ export const getRecommendedProducts = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
+  console.log('category', category);
+  
   try {
     const products = await Product.find({ category: category });
     res.json({products});
