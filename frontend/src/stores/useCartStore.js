@@ -11,7 +11,7 @@ export const useCartStore = create((set, get) => ({
 
   getMyCoupon: async () => {
     try {
-      const response = await axios.get('api/coupons');
+      const response = await axios.get('/coupons');
       set({ coupon: response.data });
     } catch (error) {
       console.error('Error fetching coupon:', error);
@@ -19,7 +19,7 @@ export const useCartStore = create((set, get) => ({
   },
   applyCoupon: async code => {
     try {
-      const response = await axios.post('/api/coupons/validate', { code });
+      const response = await axios.post('/coupons/validate', { code });
       set({ coupon: response.data, isCouponApplied: true });
       get().calculateTotals();
       toast.success('Coupon applied successfully');
@@ -36,8 +36,6 @@ export const useCartStore = create((set, get) => ({
   getCartItems: async () => {
     try {
       const res = await axios.get('/cart');
-      console.log(res.data);
-      
       set({ cart: res.data });
       get().calculateTotals();
     } catch (error) {
@@ -45,16 +43,14 @@ export const useCartStore = create((set, get) => ({
       toast.error(error.response.data.message || 'An error occurred');
     }
   },
-
   clearCart: async () => {
     set({ cart: [], coupon: null, total: 0, subtotal: 0 });
   },
-
-  addToCart: async (product) => {
+  addToCart: async product => {
     try {
       await axios.post('/cart', { productId: product._id });
-        
       toast.success('Product added to cart');
+
       set(prevState => {
         const existingItem = prevState.cart.find(
           item => item._id === product._id
@@ -73,17 +69,13 @@ export const useCartStore = create((set, get) => ({
       toast.error(error.response.data.message || 'An error occurred');
     }
   },
-
   removeFromCart: async productId => {
-    console.log('remove from cart');
-    
     await axios.delete(`/cart`, { data: { productId } });
     set(prevState => ({
       cart: prevState.cart.filter(item => item._id !== productId),
     }));
     get().calculateTotals();
   },
-
   updateQuantity: async (productId, quantity) => {
     if (quantity === 0) {
       get().removeFromCart(productId);
@@ -98,7 +90,6 @@ export const useCartStore = create((set, get) => ({
     }));
     get().calculateTotals();
   },
-
   calculateTotals: () => {
     const { cart, coupon } = get();
     const subtotal = cart.reduce(

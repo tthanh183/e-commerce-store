@@ -5,9 +5,9 @@ import { MoveRight } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from '../lib/axios';
 
-// const stripePromise = loadStripe(
-//   'pk_test_51KZYccCoOZF2UhtOwdXQl3vcizup20zqKqT9hVUIsVzsdBrhqbUI2fE0ZdEVLdZfeHjeyFXtqaNsyCJCmZWnjNZa00PzMAjlcL'
-// );
+const stripePromise = loadStripe(
+  'pk_test_51Q6NTxRvzgjIuypHWSTUdE1wQmn53tBc6ZfzHQcbyiOpUy7o54K7ADeI46QObNvDTXEgmPmcEl4nd9S8gqDwJtyz0091HKEZ44'
+);
 
 const OrderSummary = () => {
   const { total, subtotal, coupon, isCouponApplied, cart } = useCartStore();
@@ -18,20 +18,21 @@ const OrderSummary = () => {
   const formattedSavings = savings.toFixed(2);
 
   const handlePayment = async () => {
-    // const stripe = await stripePromise;
-    // const res = await axios.post('/payments/create-checkout-session', {
-    //   products: cart,
-    //   couponCode: coupon ? coupon.code : null,
-    // });
+    const stripe = await stripePromise;
+    const res = await axios.post('/payments/create-checkout-session', {
+      products: cart,
+      couponCode: coupon ? coupon.code : null,
+    });
+    console.log(res.data);
+    
+    const session = res.data;
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
 
-    // const session = res.data;
-    // const result = await stripe.redirectToCheckout({
-    //   sessionId: session.id,
-    // });
-
-    // if (result.error) {
-    //   console.error('Error:', result.error);
-    // }
+    if (result.error) {
+      console.error('Error:', result.error);
+    }
   };
 
   return (
