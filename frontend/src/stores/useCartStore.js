@@ -17,6 +17,7 @@ export const useCartStore = create((set, get) => ({
       console.error('Error fetching coupon:', error);
     }
   },
+  
   applyCoupon: async code => {
     try {
       const response = await axios.post('/coupons/validate', { code });
